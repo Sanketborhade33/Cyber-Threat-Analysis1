@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Threat Analyzer</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <!-- Smooth Scroll + Glow Effect -->
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Floating animation */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    /* Glow Animation */
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px #00ffff, 0 0 20px #00bcd4; }
+      50% { box-shadow: 0 0 25px #00ffff, 0 0 45px #00bcd4; }
+      100% { box-shadow: 0 0 10px #00ffff, 0 0 20px #00bcd4; }
+    }
+
+    .glow {
+      animation: glow 2.5s infinite alternate;
+    }
+  </style>
+</head>
+
+<body class="bg-gradient-to-b from-gray-900 via-black to-gray-900 text-gray-200">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800/80 backdrop-blur-md sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto flex items-center justify-between px-5 py-4">
+      <h1 class="text-2xl font-bold text-cyan-400">⚡ CyberSec</h1>
+      <div class="space-x-6 hidden md:flex">
+        <a href="#features" class="hover:text-cyan-400 transition duration-300">Features</a>
+        <a href="#about" class="hover:text-cyan-400 transition duration-300">About</a>
+        <a href="#contact" class="hover:text-cyan-400 transition duration-300">Contact</a>
+      </div>
+      <button id="menuButton" class="md:hidden text-cyan-400 text-2xl">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="hidden fixed inset-0 bg-black/90 z-40 flex flex-col items-center justify-center space-y-6 text-2xl">
+    <a href="#features" class="text-cyan-400">Features</a>
+    <a href="#about" class="text-cyan-400">About</a>
+    <a href="#contact" class="text-cyan-400">Contact</a>
+    <button id="closeButton" class="text-red-400 text-3xl mt-8"><i class="fas fa-times"></i></button>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="relative py-32 overflow-hidden text-center">
+    <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=1500&q=80')] bg-cover bg-center opacity-20"></div>
+    <div class="relative z-10 max-w-4xl mx-auto px-6">
+      <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight">
+        Cyber Threat <span class="text-cyan-400">Analyzer</span>
+      </h1>
+      <p class="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
+        Real-time web threat monitoring powered by AI, Machine Learning, and Predictive Analytics.
+      </p>
+      <a href="http://localhost:8503/" 
+  class="glow mt-10 inline-block bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold py-3 px-10 rounded-full text-xl transition transform hover:scale-105">
+  🚀 Launch Dashboard
+</a>
+
+    </div>
+
+    <!-- Floating Elements -->
+    <div class="absolute -top-10 left-20 w-10 h-10 bg-cyan-400 rounded-full opacity-40 animate-pulse"></div>
+    <div class="absolute bottom-10 right-24 w-6 h-6 bg-blue-400 rounded-full opacity-30 animate-bounce"></div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-24 bg-gray-900">
+    <div class="max-w-6xl mx-auto text-center px-6">
+      <h2 class="text-4xl font-bold text-cyan-400 mb-12">Key Features</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <!-- Feature Card -->
+        <div class="bg-gray-800 rounded-xl p-8 shadow-xl hover:scale-105 hover:shadow-cyan-400/30 transition-all duration-300">
+          <i class="fas fa-shield-alt text-4xl text-cyan-400 mb-4"></i>
+          <h3 class="text-2xl font-semibold mb-3">Real-Time Detection</h3>
+          <p class="text-gray-400">Analyze live network packets to detect abnormal traffic, preventing attacks before they spread.</p>
+        </div>
+
+        <div class="bg-gray-800 rounded-xl p-8 shadow-xl hover:scale-105 hover:shadow-cyan-400/30 transition-all duration-300">
+          <i class="fas fa-brain text-4xl text-blue-400 mb-4"></i>
+          <h3 class="text-2xl font-semibold mb-3">Machine Learning Insights</h3>
+          <p class="text-gray-400">AI-driven models identify hidden attack patterns and classify threats with near-perfect accuracy.</p>
+        </div>
+
+        <div class="bg-gray-800 rounded-xl p-8 shadow-xl hover:scale-105 hover:shadow-cyan-400/30 transition-all duration-300">
+          <i class="fas fa-globe text-4xl text-green-400 mb-4"></i>
+          <h3 class="text-2xl font-semibold mb-3">Global Threat Map</h3>
+          <p class="text-gray-400">Interactive visualizations showcase attacks happening worldwide with geographic precision.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-gradient-to-r from-gray-800 to-black text-center">
+    <h2 class="text-4xl font-bold text-cyan-400 mb-6">About This Project</h2>
+    <p class="max-w-3xl mx-auto text-gray-300 leading-relaxed">
+      The <strong>Cyber Threat Analyzer</strong> combines Machine Learning, Neural Networks, and Real-time Analytics
+      to detect, predict, and visualize cyberattacks before they impact your system. Built with Streamlit and modern data visualization tools.
+    </p>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 bg-gray-900 text-center">
+    <h2 class="text-3xl font-bold text-cyan-400 mb-4">Get In Touch</h2>
+    <p class="text-gray-300 mb-6">Have questions or want to collaborate? Let’s connect!</p>
+    <a href="mailto:sanketborhade33@gmail.com"
+      class="bg-gradient-to-r from-cyan-500 to-blue-600 text-white py-3 px-8 rounded-full font-semibold text-lg hover:scale-105 transition transform">
+      ✉️ Contact Me
+    </a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black py-6 text-center text-gray-500">
+    <p>&copy; 2025 <span class="text-cyan-400">Cyber Threat Analyzer</span>. All rights reserved.</p>
+    <div class="flex justify-center mt-3 space-x-4">
+      <a href="#" class="hover:text-cyan-400 transition"><i class="fab fa-linkedin-in"></i></a>
+      <a href="#" class="hover:text-cyan-400 transition"><i class="fab fa-github"></i></a>
+      <a href="#" class="hover:text-cyan-400 transition"><i class="fab fa-twitter"></i></a>
+    </div>
+  </footer>
+
+  <!-- Script for mobile menu -->
+  <script>
+    const menuButton = document.getElementById('menuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeButton = document.getElementById('closeButton');
+
+    menuButton.addEventListener('click', () => mobileMenu.classList.remove('hidden'));
+    closeButton.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+  </script>
+
+</body>
+</html>
