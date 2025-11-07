@@ -1,5 +1,5 @@
 
-# 1️⃣ Import Required Modules
+
 import os
 import streamlit as st
 import pandas as pd
@@ -13,28 +13,28 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, accuracy_score, r2_score, classification_report
 
-# ✅ Disable TensorFlow OneDNN Warning
+
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
-# st.set_option('deprecation.showPyplotGlobalUse', False)
 
 
-# ✅ Suppress matplotlib warnings safely
+
+
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning, module="matplotlib")
 
-# ✅ Streamlit Page Configuration
+
 st.set_page_config(page_title="Cyber Threat Analyzer", layout="wide")
 
-# ✅ Dataset & Model Paths
+
 DATA_PATH = "data/sample_data.csv"
 SCALER_PATH = "models/scaler.pkl"
 REGRESSOR_PATH = "models/threat_score_regressor.pkl"
 CLASSIFIER_PATH = "models/attack_classifier.pkl"
 
-# ✅ Ensure Models Directory Exists
+
 os.makedirs("models", exist_ok=True)
 
-# ✅ Load Dataset
+
 if os.path.exists(DATA_PATH):
     data = pd.read_csv(DATA_PATH)
 else:
@@ -69,14 +69,13 @@ if 'anomaly_score' not in data.columns:
 
 
 
-# ✅ Ensure Duration is Computed
+
 if 'duration_seconds' not in data.columns:
     data['creation_time'] = pd.to_datetime(data['creation_time'], errors='coerce')
     data['end_time'] = pd.to_datetime(data['end_time'], errors='coerce')
     data['duration_seconds'] = (data['end_time'] - data['creation_time']).dt.total_seconds().fillna(0)
     data.to_csv(DATA_PATH, index=False)
 
-# ✅ Compute Threat Score if Missing
 if 'threat_score' not in data.columns:
     def calculate_threat_score(row):
         score = 0
@@ -103,21 +102,20 @@ if 'threat_score' not in data.columns:
     data['threat_score'] = data.apply(calculate_threat_score, axis=1)
     data.to_csv(DATA_PATH, index=False)
 
-# ✅ Feature Scaling
+
 scaler = StandardScaler()
 X = data[['bytes_in', 'bytes_out', 'duration_seconds']]
 X_scaled = scaler.fit_transform(X)
 joblib.dump(scaler, SCALER_PATH)
 
-# ✅ Train Models
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, data['threat_score'], test_size=0.3, random_state=42)
 
-# 🔹 Train **GradientBoosting** Regression Model (Threat Score Prediction)
+
 regressor = GradientBoostingRegressor(n_estimators=700, max_depth=10, learning_rate=0.1, random_state=42)
 regressor.fit(X_train, y_train)
 joblib.dump(regressor, REGRESSOR_PATH)
 
-# 🔹 Train **RandomForestClassifier** (Attack Classification)
+
 y_class = (data['threat_score'] >= 5).astype(int)
 X_train_class, X_test_class, y_train_class, y_test_class = train_test_split(X_scaled, y_class, test_size=0.3, random_state=42)
 classifier = RandomForestClassifier(n_estimators=300, max_depth=15, random_state=42)
@@ -132,19 +130,19 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 
-# ✅ Define Input Features and Target Variable
+
 X_nn = data[['bytes_in', 'bytes_out', 'duration_seconds']]  # Ensure these columns exist
 y_nn = (data['threat_score'] > 5).astype(int)  # Convert threat scores to binary labels
 
-# ✅ Train-Test Split
+
 X_train_nn, X_test_nn, y_train_nn, y_test_nn = train_test_split(X_nn, y_nn, test_size=0.3, random_state=42)
 
-# ✅ Feature Scaling
+
 scaler_nn = StandardScaler()
 X_train_nn = scaler_nn.fit_transform(X_train_nn)
 X_test_nn = scaler_nn.transform(X_test_nn)
 
-# ✅ Define Neural Network Model
+
 model = Sequential([
     Dense(128, activation="relu", input_shape=(X_train_nn.shape[1],)),
     Dropout(0.5),
@@ -153,18 +151,18 @@ model = Sequential([
     Dense(1, activation="sigmoid")  # Binary classification (0: Low Risk, 1: High Risk)
 ])
 
-# ✅ Compile the Model
+
 model.compile(optimizer=Adam(), loss="binary_crossentropy", metrics=["accuracy"])
 
-# ✅ Train the Model and Save History
+
 history = model.fit(X_train_nn, y_train_nn, epochs=10, batch_size=32, validation_split=0.2, verbose=1)
 
-# ✅ Model Evaluation
+
 loss, accuracy = model.evaluate(X_test_nn, y_test_nn)
 # st.sidebar.text(f"🔍 Neural Network Test Accuracy: {accuracy:.4f}")
 
 
-# ✅ Prediction Functions
+
 def predict_threat_score(bytes_in, bytes_out, duration_seconds):
     """Predicts threat score using the trained Gradient Boosting model."""
     scaler = joblib.load(SCALER_PATH)
@@ -181,7 +179,7 @@ def classify_attack(bytes_in, bytes_out, duration_seconds):
     prediction_proba = classifier.predict_proba(input_scaled)
     return "High Risk" if prediction_proba[0][1] > 0.5 else "Low Risk"
 
-# ✅ Evaluate Model Accuracy
+
 y_pred_threat = regressor.predict(X_test)
 y_pred_class = classifier.predict(X_test_class)
 
@@ -195,7 +193,7 @@ accuracy = accuracy_score(y_test_class, y_pred_class)
 
 
 
-# ✅ Apply Anomaly Detection
+
 if 'anomaly_score' not in data.columns:
     st.warning("🚨 `anomaly_score` not found! Running anomaly detection model...")
     features = ['bytes_in', 'bytes_out', 'duration_seconds']
@@ -207,12 +205,9 @@ if 'anomaly_score' not in data.columns:
         st.error("❌ Required columns missing for anomaly detection: 'bytes_in', 'bytes_out', 'duration_seconds'")
 
 
-# ✅ Streamlit UI
-# ✅ Streamlit UI
 tabs = ["📊 Dashboard", "🔍 Threat Analysis", "🤖 ML Predictions", "🛑 Blocklist", "🔐 Security Insights"]
 selected_tab = st.sidebar.radio("Navigate", tabs)
 
-# 📊 Cyber Threat Analysis Dashboard (Enhanced)
 if selected_tab == "📊 Dashboard":
     st.title("📊 Cyber Threat Analysis Dashboard")
     st.write("An interactive overview of network traffic and detected cyber threats.")
@@ -234,7 +229,6 @@ if selected_tab == "📊 Dashboard":
         anomaly_count = (data['anomaly_score'] == -1).sum() if 'anomaly_score' in data.columns else 0
         st.metric(label="🔴 Anomalies Detected", value=anomaly_count)
 
-    # ✅ **Threat Heatmap & Interactive Charts**
     st.subheader("📈 Cyber Threat Visualizations")
     
     col1, col2 = st.columns(2)
@@ -255,27 +249,26 @@ if selected_tab == "📊 Dashboard":
         ax.set_ylabel("Source IP")
         st.pyplot(fig)
 
-    # ✅ **Geographical Heatmap (World Map)**
+ 
     import plotly.express as px
     import pycountry  
 
     st.write("### 🌍 Global Cyber Threat Heatmap")
 
-    # ✅ Convert country codes to ISO3 with error handling
+ 
     def convert_to_iso3(country_code):
         try:
             return pycountry.countries.get(alpha_2=country_code.upper()).alpha_3
         except AttributeError:
             return None  # Returns None for unrecognized country codes
 
-    # ✅ Apply conversion
+  
     data['iso3'] = data['src_ip_country_code'].apply(convert_to_iso3)
 
-    # ✅ Aggregate data properly
+  
     country_data = data['iso3'].dropna().value_counts().reset_index()
     country_data.columns = ['Country', 'Threats']
 
-    # ✅ Create improved choropleth
     fig = px.choropleth(
         country_data,
         locations="Country",
@@ -290,7 +283,7 @@ if selected_tab == "📊 Dashboard":
         height=600
     )
 
-    # ✅ Enhanced Geographical Styling
+    
     fig.update_geos(
         showcountries=True,
         countrycolor="rgba(255,255,255,0.5)",
@@ -303,10 +296,10 @@ if selected_tab == "📊 Dashboard":
         bgcolor='#0e1117'
     )
 
-    # ✅ Streamlit Display
+    
     st.plotly_chart(fig, use_container_width=True, theme="streamlit")
 
-    # ✅ **Threat Distribution - Pie Chart**
+   
     st.subheader("📌 Threat Classification")
 
     if 'threat_score' in data.columns:
@@ -510,7 +503,7 @@ if selected_tab == "🔍 Threat Analysis":
         st.pyplot()
 
  
-    # ✅ Model Training History Visualization (Only Visible in This Tab)
+   
     if st.checkbox("📌 Show Model Training History"):
         try:
             # Check if 'history' is defined
@@ -548,7 +541,7 @@ if selected_tab == "🔍 Threat Analysis":
 
 
 
-# ML Predictions
+
 elif selected_tab == "🤖 ML Predictions":
     st.title("🤖 Predict Cyber Threats using Machine Learning")
 
@@ -573,7 +566,7 @@ elif selected_tab == "🤖 ML Predictions":
 
 
 
-# ✅ Enhanced Blocklist Management (Persistent Storage)
+
 BLOCKLIST_PATH = "blocklist.txt"
 
 def load_blocklist():
@@ -589,25 +582,24 @@ def save_blocklist(blocklist):
         for ip in blocklist:
             f.write(ip + "\n")
 
-# ✅ Display Blocklist in UI
-if selected_tab == "🛑 Blocklist":  # ✅ Correct placement of condition
+
+if selected_tab == "🛑 Blocklist":  
     st.title("🛑 Auto Blocklist for Suspicious IPs")
-    
-    # ✅ Load the existing blocklist
+  
     blocklist = load_blocklist()
 
-    # ✅ Add suspicious IPs from dataset (only in Blocklist tab)
+   
     suspicious_ips = set(data[data['threat_score'] > 7]['src_ip'].unique())
     blocklist.update(suspicious_ips)  # Merge dataset IPs into blocklist
     save_blocklist(blocklist)  # Save updated blocklist
 
-    # ✅ Display the blocklisted IPs
+  
     st.write(f"### 🚨 {len(blocklist)} Suspicious IPs Blocked")
     
     if blocklist:
         st.table(pd.DataFrame(list(blocklist), columns=["Blocked IPs"]))  # ✅ Convert set to list before displaying
     
-    # ✅ Option to manually download blocklist
+    
     if st.button("📥 Download Blocklist"):
         save_blocklist(blocklist)  # Ensure latest IPs are saved
         st.success("✅ Blocklist saved! Check 'blocklist.txt'")
@@ -616,7 +608,7 @@ if selected_tab == "🛑 Blocklist":  # ✅ Correct placement of condition
 
 
 
-# Security Insights
+
 elif selected_tab == "🔐 Security Insights":
     st.title("🔐 Security Best Practices & Threat Mitigation")
 
@@ -624,7 +616,7 @@ elif selected_tab == "🔐 Security Insights":
     Cybersecurity threats are constantly evolving. Implementing strong security measures is essential to protect sensitive data and networks. Below are key best practices:
     """)
 
-    # ✅ **1️⃣ Strong Authentication Methods**
+   
     st.subheader("🔑 Strong Authentication & Access Control")
     st.markdown("""
     - Use **multi-factor authentication (MFA)** to protect user accounts.
@@ -688,6 +680,7 @@ elif selected_tab == "🔐 Security Insights":
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("📍 Developed by Sanket")
+
 
 
 
